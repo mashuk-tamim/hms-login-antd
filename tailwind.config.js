@@ -4,8 +4,8 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				primary: "#6b5ced",
-				secondary: "#3e33e1",
+				primary: "#3e33e1",
+				secondary: "#6b5ced",
 			},
 			fontFamily: {
 				nunito: "Nunito, sans-serif",
