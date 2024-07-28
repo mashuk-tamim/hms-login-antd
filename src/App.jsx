@@ -10,10 +10,35 @@ import {
 	Divider,
 	ConfigProvider,
 } from "antd";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function App() {
-	const onFinish = (values) => {
-		console.log("Received values of form: ", values);
+	const navigate = useNavigate();
+	const onFinish = async (values) => {
+    console.log("Received values of form: ", values);
+
+		try {
+			const response = await axios.post(
+				"https://api.prosoftwarelab.com/api/v1/auth/login",
+				{
+					identifier: values.identifier,
+					password: values.password,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			console.log("Response:", response.data);
+      // Handle successful response, e.g., store token, redirect to dashboard, etc.
+      navigate("/welcome");
+		} catch (error) {
+			console.error("Error:", error);
+			// Handle error, e.g., show error message to user
+		}
 	};
 	return (
 		<main className="w-screen h-screen flex font-nunito">
@@ -31,18 +56,6 @@ function App() {
 					healthcare facility runs smoothly and effectively.
 				</p>
 			</div>
-			{/* login form */}
-			{/* <div className="w-[50%] h-full bg-[#ffffff] text-black">
-				<Typography.Title level={5}>Email/Phone</Typography.Title>
-				<Input
-					size="large"
-					placeholder="Email address or phone"
-					prefix={<UserOutlined />}
-					className="font-semibold"
-				/>
-				<Typography.Title level={5}>Password</Typography.Title>
-				<Input size="large" placeholder="Password" prefix={<LockOutlined />} />
-			</div> */}
 			<div className="w-[50%] h-full bg-[#ffffff] text-black">
 				<ConfigProvider
 					theme={{
@@ -71,49 +84,60 @@ function App() {
 								remember: true,
 							}}
 							onFinish={onFinish}
+							onFinishFailed={(failedValues) => {
+								console.log({ failedValues });
+							}}
 						>
 							<Form.Item
-								name="username"
+								name="identifier"
 								rules={[
 									{
 										required: true,
-										message: "Please input your Username!",
+										message: "Please input your Email or Phone!",
 									},
-								]}
+                ]}
+                noStyle
 							>
-								<Typography.Title level={5}>
-									<span className="text-2xl text-red-400 relative top-2">
-										*
-									</span>{" "}
-									Email/Phone
-								</Typography.Title>
-								<Input
-									prefix={<UserOutlined className="site-form-item-icon" />}
-									placeholder="Email address or phone"
-									size="large"
-								/>
+								<Form.Item>
+									<Typography.Title level={5}>
+										<span className="text-2xl text-red-400 relative top-1">
+											*
+										</span>{" "}
+										Email/Phone
+									</Typography.Title>
+									<Input
+										prefix={<UserOutlined className="site-form-item-icon" />}
+										placeholder="Email address or phone"
+										size="large"
+									/>
+								</Form.Item>
 							</Form.Item>
 							<Form.Item
+								required
 								name="password"
 								rules={[
 									{
 										required: true,
 										message: "Please input your Password!",
 									},
-								]}
+                ]}
+                noStyle
 							>
-								<Typography.Title level={5}>
-									<span className="text-2xl text-red-400 relative top-2">
-										*
-									</span>{" "}
-									Password
-								</Typography.Title>
-								<Input.Password
-									prefix={<LockOutlined className="site-form-item-icon" />}
-									type="password"
-									placeholder="Password"
-									size="large"
-								/>
+								<Form.Item>
+									<Typography.Title level={5}>
+										<span className="text-2xl text-red-400 relative top-1">
+											*
+										</span>{" "}
+										Password
+									</Typography.Title>
+									<Input.Password
+										required
+										prefix={<LockOutlined className="site-form-item-icon" />}
+										type="password"
+										placeholder="Password"
+										size="large"
+									/>
+								</Form.Item>
 							</Form.Item>
 							<Form.Item>
 								<div className="flex items-center justify-between">
@@ -147,7 +171,8 @@ function App() {
 						</Form>
 						<div className="text-[14px] text-center font-semibold">
 							<p>
-								Powered by <span className="text-primary">Pro Software Lab</span>
+								Powered by{" "}
+								<span className="text-primary">Pro Software Lab</span>
 							</p>
 							<p>&copy; Pro Software Lab | Admin Panel</p>
 						</div>
