@@ -1,5 +1,3 @@
-// import React from "react";
-// import "./App.jsx";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
 	Button,
@@ -10,34 +8,20 @@ import {
 	Divider,
 	ConfigProvider,
 } from "antd";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { login } from "./api/request";
 
 function App() {
 	const navigate = useNavigate();
 	const onFinish = async (values) => {
-    console.log("Received values of form: ", values);
+		console.log("Received values of form: ", values);
 
 		try {
-			const response = await axios.post(
-				"https://api.prosoftwarelab.com/api/v1/auth/login",
-				{
-					identifier: values.identifier,
-					password: values.password,
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
-
+			const response = await login(values.identifier, values.password);
 			console.log("Response:", response.data);
-      // Handle successful response, e.g., store token, redirect to dashboard, etc.
-      navigate("/welcome");
+			navigate("/welcome");
 		} catch (error) {
 			console.error("Error:", error);
-			// Handle error, e.g., show error message to user
 		}
 	};
 	return (
@@ -55,7 +39,8 @@ function App() {
 					efficiency and improve patient care, HMS Admin ensures that your
 					healthcare facility runs smoothly and effectively.
 				</p>
-			</div>
+      </div>
+      {/* login form */}
 			<div className="w-[50%] h-full bg-[#ffffff] text-black">
 				<ConfigProvider
 					theme={{
@@ -95,8 +80,8 @@ function App() {
 										required: true,
 										message: "Please input your Email or Phone!",
 									},
-                ]}
-                noStyle
+								]}
+								noStyle
 							>
 								<Form.Item>
 									<Typography.Title level={5}>
@@ -120,8 +105,8 @@ function App() {
 										required: true,
 										message: "Please input your Password!",
 									},
-                ]}
-                noStyle
+								]}
+								noStyle
 							>
 								<Form.Item>
 									<Typography.Title level={5}>
