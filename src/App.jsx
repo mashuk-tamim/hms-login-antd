@@ -10,19 +10,27 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { login } from "./api/request";
+import { useState } from "react";
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 	const navigate = useNavigate();
 	const onFinish = async (values) => {
 		console.log("Received values of form: ", values);
+    setLoading(true);
+    setError(false);
 
 		try {
 			const response = await login(values.identifier, values.password);
 			console.log("Response:", response.data);
 			navigate("/welcome");
 		} catch (error) {
-			console.error("Error:", error);
-		}
+      console.error("Error:", error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
 	};
 	return (
 		<main className="w-screen h-screen flex font-nunito">
@@ -39,8 +47,8 @@ function App() {
 					efficiency and improve patient care, HMS Admin ensures that your
 					healthcare facility runs smoothly and effectively.
 				</p>
-      </div>
-      {/* login form */}
+			</div>
+			{/* login form */}
 			<div className="w-[50%] h-full bg-[#ffffff] text-black">
 				<ConfigProvider
 					theme={{
@@ -124,6 +132,11 @@ function App() {
 									/>
 								</Form.Item>
 							</Form.Item>
+							{error && (
+								<div className="text-red-600">
+									Something went wrong. Please try again.
+								</div>
+							)}
 							<Form.Item>
 								<div className="flex items-center justify-between">
 									<div>
@@ -150,10 +163,11 @@ function App() {
 									size="large"
 									block
 								>
-									Log in
+									{loading ? "loading..." : "login"}
 								</Button>
 							</Form.Item>
 						</Form>
+
 						<div className="text-[14px] text-center font-semibold">
 							<p>
 								Powered by{" "}
